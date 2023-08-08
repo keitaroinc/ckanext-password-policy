@@ -1,0 +1,14 @@
+# password_policy-js:
+#   filter: rjsmin
+#   output: ckanext-password_policy/%(version)s-password_policy.js
+#   contents:
+#     - js/password_policy.js
+#   extra:
+#     preload:
+#       - base/main
+
+# password_policy-css:
+#   filter: cssrewrite
+#   output: ckanext-password_policy/%(version)s-password_policy.css
+#   contents:
+#     - css/password_policy.css
