@@ -16,8 +16,6 @@ def user_custom_password_validator(key, data, errors, context):
     value = data[key]
     valid_pass = h.custom_password_check(value)
 
-    breakpoint()
-
     if isinstance(value, Missing):
         pass
     elif not isinstance(value, string_types):
