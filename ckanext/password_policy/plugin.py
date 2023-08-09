@@ -24,7 +24,7 @@ def user_custom_password_validator(key, data, errors, context):
         pass
     elif not valid_pass['password_ok']:
         errors[('password',)].append(_('Your password must be 12 characters or '
-                                       'longer and contain Uppercase, Lowercase, '
+                                       'longer and contain uppercase, lowercase, '
                                        'digit and special character'))
     # elif len(value) < 17:
     #     errors[('password',)].append(_('Your password must be 17 characters or '
@@ -47,7 +47,6 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     def get_validators(self):
         return {'user_custom_password_validator': user_custom_password_validator}
     
-
     def get_blueprint(self):
         return views.get_blueprints()
 
