@@ -1,4 +1,10 @@
 import re
+from ckan.lib.redis import connect_to_redis
+
+
+def user_locked():
+    redis_conn = connect_to_redis()
+    return redis_conn
 
 
 def custom_password_check(password):
