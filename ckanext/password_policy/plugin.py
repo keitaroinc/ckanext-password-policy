@@ -4,7 +4,7 @@ import ckanext.password_policy.views as views
 import ckan.lib.navl.dictization_functions as df
 import ckanext.password_policy.helpers as h
 from six import string_types
-from ckan.common import _, request
+from ckan.common import _
 
 
 Missing = df.Missing
@@ -26,8 +26,7 @@ def user_custom_password_validator(key, data, errors, context):
                                        'longer and contain uppercase, lowercase, '
                                        'digit and special character'))
 
-          
-        
+     
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer) 
     plugins.implements(plugins.IValidators)

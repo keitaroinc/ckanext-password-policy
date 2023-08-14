@@ -2,9 +2,20 @@ import re
 from ckan.lib.redis import connect_to_redis
 
 
-def user_locked():
+def user_login_count(username):
     redis_conn = connect_to_redis()
-    return redis_conn
+    user_cached = redis_conn.get(username)
+    if user_cached == None:
+        print('user will be cached in redis')
+        redis_conn.set(username, 1, ex=600)
+    else:
+        print('user allready cached in redis, incrementing')
+        redis_conn.incr(username)
+
+    failed_logins_count = int(redis_conn.get(username))
+    print(failed_logins_count)
+
+    return failed_logins_count
 
 
 def custom_password_check(password):
