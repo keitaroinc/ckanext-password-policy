@@ -1,4 +1,5 @@
 from ckan.views.user import RegisterView, EditView
+from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.lib.base as base
@@ -7,6 +8,15 @@ import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.common import _, config, g, request
 import ckan.lib.helpers as h
+import ckanext.password_policy.helpers as helper
+from webob import Request
+from webob.exc import HTTPFound, HTTPUnauthorized
+from flask import Flask, redirect
+from six.moves.urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+try:
+    from webob.multidict import MultiDict
+except ImportError:
+    from webob import UnicodeMultiDict as MultiDict
 
 
 custom_user = Blueprint(u'custom_user', __name__, url_prefix=u'/user')
@@ -84,6 +94,100 @@ class EditView_(EditView):
         return context, id
 
 
+class FriendlyFormPlugin_(FriendlyFormPlugin):
+
+    def identify(self, environ):
+        u'''
+        Override the parent's identifier to introduce a login counter
+        (possibly along with a post-login page) and load the login counter into
+        the ``environ``.
+
+        '''
+        request = Request(environ, charset=self.charset)
+
+        path_info = environ[u'PATH_INFO']
+        script_name = environ.get(u'SCRIPT_NAME') or u'/'
+        query = request.GET
+        if path_info == self.login_handler_path:
+            # We are on the URL where repoze.who processes authentication. #
+            # Let's append the login counter to the query string of the
+            # 'came_from' URL. It will be used by the challenge below if
+            # authorization is denied for this request.
+            form = dict(request.POST)
+            form.update(query)
+            try:
+                login = form[u'login']
+                password = form[u'password']
+            except KeyError:
+                credentials = None
+            else:
+                if request.charset == u'us-ascii':
+                    credentials = {
+                        u'login': str(login),
+                        u'password': str(password),
+                    }
+                else:
+                    credentials = {u'login': login, u'password': password}
+
+            try:
+                credentials[u'max_age'] = form[u'remember']
+            except KeyError:
+                pass
+            
+            referer = environ.get(u'HTTP_REFERER', script_name)
+            destination = form.get(u'came_from', referer)
+
+
+            if self.post_login_url:
+                # There's a post-login page, so we have to replace the
+                # destination with it.
+                destination = self._get_full_path(self.post_login_url,
+                                                  environ)
+                if u'came_from' in query:
+                    # There's a referrer URL defined, so we have to pass it to
+                    # the post-login page as a GET variable.
+                    destination = self._insert_qs_variable(destination,
+                                                           u'came_from',
+                                                           query[u'came_from'])
+            failed_logins = self._get_logins(environ, True)
+            new_dest = self._set_logins_in_url(destination, failed_logins)
+
+            environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
+            
+            if helper.user_login_count(login) < 3:
+                return credentials
+            else:
+                self.post_login_url = 'user/locked'
+                return None
+            
+        
+        elif path_info == self.logout_handler_path:
+            #    We are on the URL where repoze.who logs the user out.    #
+            r = Request(environ)
+            params = dict(list(r.GET.items()) + list(r.POST.items()))
+            form = MultiDict(params)
+            form.update(query)
+            referer = environ.get(u'HTTP_REFERER', script_name)
+            came_from = form.get(u'came_from', referer)
+            # set in environ for self.challenge() to find later
+            environ[u'came_from'] = came_from
+            environ[u'repoze.who.application'] = HTTPUnauthorized()
+            return None
+
+        elif path_info == self.login_form_url or self._get_logins(environ):
+            #  We are on the URL that displays the from OR any other page  #
+            #   where the login counter is included in the query string.   #
+            # So let's load the counter into the environ and then hide it from
+            # the query string (it will cause problems in frameworks like TG2,
+            # where this unexpected variable would be passed to the controller)
+            environ[u'repoze.who.logins'] = self._get_logins(environ, True)
+            # Hiding the GET variable in the environ:
+            if self.login_counter_name in query:
+                del query[self.login_counter_name]
+                environ[u'QUERY_STRING'] = urlencode(query, doseq=True)
+        
+
+
 def _get_repoze_handler(handler_name):
     u'''Returns the URL that repoze.who will respond to and perform a
     login or logout.'''
@@ -115,13 +219,17 @@ def logged_in():
     came_from = request.params.get(u'came_from', u'')
     if h.url_is_local(came_from):
         return h.redirect_to(str(came_from))
-
     if g.user:
         return me()
     else:
+        
         err = _(u'Login failed. Bad username or password overwriten.')
         h.flash_error(err)
         return custom_login()
+
+
+def locked_user():
+    return base.render(u'user/locked.html')
 
 
 custom_user.add_url_rule(
@@ -133,6 +241,8 @@ custom_user.add_url_rule(u'/edit/<id>', view_func=_edit_view)
 
 custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/logged_in', view_func=logged_in)
+
+custom_user.add_url_rule(u'/locked', view_func=locked_user)
 
 
 def get_blueprints():

@@ -33,6 +33,8 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IAuthenticator, inherit=True)
 
+    
+
     # IConfigurer
 
     def update_config(self, config_):
