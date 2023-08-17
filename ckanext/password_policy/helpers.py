@@ -19,23 +19,6 @@ def user_login_count(username):
     return failed_logins_count
 
 
-# def user_login_count(username):
-#     redis_conn = connect_to_redis()
-#     user_cached = redis_conn.get(username)
-#     if user_cached == None:
-#         print('user will be cached in redis')
-#         redis_conn.set(username, 1, ex=600)
-#     else:
-#         print('user allready cached in redis, incrementing')
-#         redis_conn.incr(username)
-
-#     failed_logins_count = int(redis_conn.get(username))
-#     print(failed_logins_count)
-#     if failed_logins_count < 3:
-#         return failed_logins_count
-#     else:
-#         return tk.redirect_to("password_policy.locked")
-
 def custom_password_check(password):
     """
     Verify the strength of 'password'

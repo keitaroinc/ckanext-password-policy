@@ -133,34 +133,32 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 credentials[u'max_age'] = form[u'remember']
             except KeyError:
                 pass
-            
-            referer = environ.get(u'HTTP_REFERER', script_name)
-            destination = form.get(u'came_from', referer)
-
-
-            if self.post_login_url:
-                # There's a post-login page, so we have to replace the
-                # destination with it.
-                destination = self._get_full_path(self.post_login_url,
-                                                  environ)
-                if u'came_from' in query:
-                    # There's a referrer URL defined, so we have to pass it to
-                    # the post-login page as a GET variable.
-                    destination = self._insert_qs_variable(destination,
-                                                           u'came_from',
-                                                           query[u'came_from'])
-            failed_logins = self._get_logins(environ, True)
-            new_dest = self._set_logins_in_url(destination, failed_logins)
-
-            environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
-            
             if helper.user_login_count(login) < 3:
+                referer = environ.get(u'HTTP_REFERER', script_name)
+                destination = form.get(u'came_from', referer)
+
+                if self.post_login_url:
+                    # There's a post-login page, so we have to replace the
+                    # destination with it.
+                    destination = self._get_full_path(self.post_login_url,
+                                                    environ)
+                    if u'came_from' in query:
+                        # There's a referrer URL defined, so we have to pass it to
+                        # the post-login page as a GET variable.
+                        destination = self._insert_qs_variable(destination,
+                                                            u'came_from',
+                                                            query[u'came_from'])
+                failed_logins = self._get_logins(environ, True)
+                new_dest = self._set_logins_in_url(destination, failed_logins)
+
+                environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
                 return credentials
             else:
-                self.post_login_url = 'user/locked'
-                return None
-            
-        
+                new_dest = 'user/locked'
+                environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
+                extra_vars = {}
+                return extra_vars
+                   
         elif path_info == self.logout_handler_path:
             #    We are on the URL where repoze.who logs the user out.    #
             r = Request(environ)
@@ -186,7 +184,6 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 del query[self.login_counter_name]
                 environ[u'QUERY_STRING'] = urlencode(query, doseq=True)
         
-
 
 def _get_repoze_handler(handler_name):
     u'''Returns the URL that repoze.who will respond to and perform a
@@ -229,7 +226,9 @@ def logged_in():
 
 
 def locked_user():
-    return base.render(u'user/locked.html')
+    
+    extra_vars = {}
+    return base.render(u'user/locked.html', extra_vars)
 
 
 custom_user.add_url_rule(
@@ -240,9 +239,9 @@ custom_user.add_url_rule(u'/edit', view_func=_edit_view)
 custom_user.add_url_rule(u'/edit/<id>', view_func=_edit_view)
 
 custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
-custom_user.add_url_rule(u'/logged_in', view_func=logged_in)
+custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "POST"))
 
-custom_user.add_url_rule(u'/locked', view_func=locked_user)
+custom_user.add_url_rule(u'/locked', view_func=locked_user, methods=("GET", "POST")) 
 
 
 def get_blueprints():
