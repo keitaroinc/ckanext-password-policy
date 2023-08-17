@@ -19,6 +19,13 @@ def user_login_count(username):
     return failed_logins_count
 
 
+def clear_login_count(username):
+
+    redis_conn = connect_to_redis()
+    redis_conn.delete(username)
+    return None
+
+
 def custom_password_check(password):
     """
     Verify the strength of 'password'

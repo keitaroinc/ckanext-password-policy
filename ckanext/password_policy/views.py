@@ -11,8 +11,7 @@ import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
 from webob import Request
 from webob.exc import HTTPFound, HTTPUnauthorized
-from flask import Flask, redirect
-from six.moves.urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+from six.moves.urllib.parse import urlencode
 try:
     from webob.multidict import MultiDict
 except ImportError:
@@ -226,9 +225,23 @@ def logged_in():
 
 
 def locked_user():
-    
+
     extra_vars = {}
     return base.render(u'user/locked.html', extra_vars)
+
+
+def logout():
+    for item in plugins.PluginImplementations(plugins.IAuthenticator):
+        if g.user:
+            helper.clear_login_count(g.user)
+        response = item.logout()
+        if response:
+            return response
+
+    url = h.url_for(u'user.logged_out_page')
+    return h.redirect_to(
+        _get_repoze_handler(u'logout_handler_path') + u'?came_from=' + url,
+        parse_url=True)
 
 
 custom_user.add_url_rule(
@@ -242,6 +255,7 @@ custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST
 custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "POST"))
 
 custom_user.add_url_rule(u'/locked', view_func=locked_user, methods=("GET", "POST")) 
+custom_user.add_url_rule(u'/_logout', view_func=logout)
 
 
 def get_blueprints():
