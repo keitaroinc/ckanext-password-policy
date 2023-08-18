@@ -20,10 +20,6 @@ Compatibility with core CKAN versions:
 
 ## Installation
 
-**TODO:** Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
-
 To install ckanext-password-policy:
 
 1. Activate your CKAN virtual environment, for example:
@@ -48,14 +44,14 @@ To install ckanext-password-policy:
 
 ## Config settings
 
-# Minimum lenth of the user password. Default is 12
-ckan.password_policy.password_length = 12
+	Minimum lenth of the user password. Default is 12
+	ckan.password_policy.password_length = 12
 
-# Number of failed logins before the user is locked. Default is 3
-ckan.password_policy.failed_logins = 3
+	Number of failed logins before the user is locked. Default is 3
+	ckan.password_policy.failed_logins = 3
 
-# Time after the locked user is allowed to log in again in seconds. Default is 600 
-ckan.password_policy.user_locked_time = 600
+	Time after the locked user is allowed to log in again in seconds. Default is 600 
+	ckan.password_policy.user_locked_time = 600
 
 
 
