@@ -102,6 +102,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
         the ``environ``.
 
         '''
+        allowed_failes_logins = config.get('ckan.password_policy.failed_logins', 3)
         request = Request(environ, charset=self.charset)
 
         path_info = environ[u'PATH_INFO']
@@ -132,7 +133,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 credentials[u'max_age'] = form[u'remember']
             except KeyError:
                 pass
-            if helper.user_login_count(login) < 3:
+            if helper.user_login_count(login) < allowed_failes_logins:
                 referer = environ.get(u'HTTP_REFERER', script_name)
                 destination = form.get(u'came_from', referer)
 
