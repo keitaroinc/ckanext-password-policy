@@ -1,4 +1,4 @@
-from ckan.views.user import RegisterView, EditView
+from ckan.views.user import RegisterView, EditView, PerformResetView
 from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
 import ckan.logic as logic
 import ckan.plugins as plugins
@@ -94,6 +94,27 @@ class EditView_(EditView):
         except logic.NotAuthorized:
             base.abort(403, _(u'Unauthorized to edit a user.'))
         return context, id
+
+
+class PerformResetView_(PerformResetView):
+        
+    def _get_form_password(self):
+        password1 = request.form.get(u'password1')
+        password2 = request.form.get(u'password2')
+       
+        valid_pass = helper.custom_password_check(password1)
+        if valid_pass['password_ok']==False:
+            raise ValueError(
+                _(u'Your password must be 12 characters or '
+                  u'longer and contain uppercase, lowercase, '
+                  u'digit and special character'))
+        elif password1 != password2:
+            raise ValueError(
+                _(u'The passwords you entered'
+                    u' do not match.'))
+        return password1
+        msg = _(u'You must provide a password')
+        raise ValueError(msg)
 
 
 class FriendlyFormPlugin_(FriendlyFormPlugin):
@@ -254,6 +275,9 @@ custom_user.add_url_rule(
 _edit_view = EditView_.as_view(str(u'edit'))
 custom_user.add_url_rule(u'/edit', view_func=_edit_view)
 custom_user.add_url_rule(u'/edit/<id>', view_func=_edit_view)
+
+custom_user.add_url_rule(
+    u'/reset/<id>', view_func=PerformResetView_.as_view(str(u'perform_reset')))
 
 custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "POST"))
