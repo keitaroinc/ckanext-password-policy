@@ -2,15 +2,10 @@
 
 # ckanext-password-policy
 
-**TODO:** Put a description of your extension here:  What does it do? What features does it have? Consider including some screenshots or embedding a video!
+CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
 
 
 ## Requirements
-
-**TODO:** For example, you might want to mention here which versions of CKAN this
-extension works with.
-
-If your extension works across different versions you can add the following table:
 
 Compatibility with core CKAN versions:
 
@@ -19,14 +14,8 @@ Compatibility with core CKAN versions:
 | 2.6 and earlier | not tested    |
 | 2.7             | not tested    |
 | 2.8             | not tested    |
-| 2.9             | not tested    |
+| 2.9             | Yes    |
 
-Suggested values:
-
-* "yes"
-* "not tested" - I can't think of a reason why it wouldn't work
-* "not yet" - there is an intention to get it working
-* "no"
 
 
 ## Installation
@@ -59,13 +48,15 @@ To install ckanext-password-policy:
 
 ## Config settings
 
-None at present
+# Minimum lenth of the user password. Default is 12
+ckan.password_policy.password_length = 12
 
-**TODO:** Document any optional config settings here. For example:
+# Number of failed logins before the user is locked. Default is 3
+ckan.password_policy.failed_logins = 3
 
-	# The minimum number of hours to wait before re-checking a resource
-	# (optional, default: 24).
-	ckanext.password_policy.some_setting = some_default_value
+# Time after the locked user is allowed to log in again in seconds. Default is 600 
+ckan.password_policy.user_locked_time = 600
+
 
 
 ## Developer installation
