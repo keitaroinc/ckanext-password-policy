@@ -38,7 +38,7 @@ def custom_password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    password_length = config.get('ckan.password_policy.password_length', 12)
+    password_length = int(config.get('ckan.password_policy.password_length', 12))
     # calculating the length
     length_error = len(password) < password_length
 

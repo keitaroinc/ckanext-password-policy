@@ -11,6 +11,7 @@ import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
 from webob import Request
 from webob.exc import HTTPFound, HTTPUnauthorized
+from six import text_type
 from six.moves.urllib.parse import urlencode
 try:
     from webob.multidict import MultiDict
@@ -34,6 +35,7 @@ def custom_user_schema(unicode_safe, user_both_passwords_entered,
     schema['password1'] = [unicode_safe, user_both_passwords_entered,
                            user_custom_password_validator,
                            user_passwords_match]
+    schema['password2'] = [text_type]
 
     return schema
 
@@ -47,6 +49,7 @@ def custom_user_edit_form_schema(
     schema['password1'] = [ignore_missing, unicode_safe,
                            user_custom_password_validator,
                            user_passwords_match]
+    schema['password2'] = [ignore_missing, unicode_safe]
 
     return schema
    
@@ -102,7 +105,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
         the ``environ``.
 
         '''
-        allowed_failes_logins = config.get('ckan.password_policy.failed_logins', 3)
+        allowed_failes_logins = int(config.get('ckan.password_policy.failed_logins', 3))
         request = Request(environ, charset=self.charset)
 
         path_info = environ[u'PATH_INFO']
