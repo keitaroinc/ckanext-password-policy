@@ -44,7 +44,7 @@ To install ckanext-password-policy:
 
 ## Config settings
 
-	Minimum lenth of the user password. Default is 12
+	Minimum length of the user password. Default is 12
 	ckan.password_policy.password_length = 12
 
 	Number of failed logins before the user is locked. Default is 3
