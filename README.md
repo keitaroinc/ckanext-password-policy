@@ -1,6 +1,6 @@
 [![Tests](https://github.com/Keitaro/ckanext-password-policy/workflows/Tests/badge.svg?branch=main)](https://github.com/Keitaro/ckanext-password-policy/actions)
 
-# CKAN password policy ckanext-password-policy
+# CKAN password policy 
 
 CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
 
