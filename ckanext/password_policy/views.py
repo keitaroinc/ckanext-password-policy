@@ -244,7 +244,7 @@ def logged_in():
         return me()
     else:
         
-        err = _(u'Login failed. Bad username or password overwriten.')
+        err = _(u'Login failed. Bad username or password')
         h.flash_error(err)
         return custom_login()
 
