@@ -1,4 +1,30 @@
 import re
+from ckan.lib.redis import connect_to_redis
+from ckan.common import config
+
+
+def user_login_count(username):
+    redis_conn = connect_to_redis()
+    user_cached = redis_conn.get(username)
+    if user_cached == None:
+        expiry = config.get('ckan.password_policy.user_locked_time', 600)
+        # user will be cached in redis with count 1
+        redis_conn.set(username, 1, ex=expiry)
+    else:
+        # user allready cached in redis, incrementing login count
+        redis_conn.incr(username)
+
+    failed_logins_count = int(redis_conn.get(username))
+    print(failed_logins_count)
+
+    return failed_logins_count
+
+
+def clear_login_count(username):
+
+    redis_conn = connect_to_redis()
+    redis_conn.delete(username)
+    return None
 
 
 def custom_password_check(password):
@@ -12,9 +38,9 @@ def custom_password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-
+    password_length = int(config.get('ckan.password_policy.password_length', 12))
     # calculating the length
-    length_error = len(password) < 12
+    length_error = len(password) < password_length
 
     # searching for digits
     digit_error = re.search(r"\d", password) is None

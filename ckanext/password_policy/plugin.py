@@ -4,9 +4,8 @@ import ckanext.password_policy.views as views
 import ckan.lib.navl.dictization_functions as df
 import ckanext.password_policy.helpers as h
 from six import string_types
-
-
 from ckan.common import _
+
 
 Missing = df.Missing
 missing = df.missing
@@ -26,15 +25,15 @@ def user_custom_password_validator(key, data, errors, context):
         errors[('password',)].append(_('Your password must be 12 characters or '
                                        'longer and contain uppercase, lowercase, '
                                        'digit and special character'))
-    # elif len(value) < 17:
-    #     errors[('password',)].append(_('Your password must be 17 characters or '
-    #                                    'longer'))
-          
-        
+
+     
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer) 
     plugins.implements(plugins.IValidators)
     plugins.implements(plugins.IBlueprint)
+    plugins.implements(plugins.IAuthenticator, inherit=True)
+
+    
 
     # IConfigurer
 
