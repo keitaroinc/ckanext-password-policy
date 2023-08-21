@@ -101,11 +101,13 @@ class PerformResetView_(PerformResetView):
     def _get_form_password(self):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
+
+        password_length = int(config.get('ckan.password_policy.password_length'))
        
         valid_pass = helper.custom_password_check(password1)
         if valid_pass['password_ok']==False:
             raise ValueError(
-                _(u'Your password must be 12 characters or '
+                _(f"u'Your password must be {password_length} characters or '"
                   u'longer and contain uppercase, lowercase, '
                   u'digit and special character'))
         elif password1 != password2:
