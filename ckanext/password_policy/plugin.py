@@ -10,7 +10,7 @@ from ckan.common import _, config
 Missing = df.Missing
 missing = df.missing
 
-password_length = int(config.get('ckan.password_policy.password_length'))
+password_length = config.get('ckan.password_policy.password_length')
 
 
 def user_custom_password_validator(key, data, errors, context):

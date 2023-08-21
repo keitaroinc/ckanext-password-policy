@@ -102,7 +102,7 @@ class PerformResetView_(PerformResetView):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
 
-        password_length = int(config.get('ckan.password_policy.password_length'))
+        password_length = config.get('ckan.password_policy.password_length')
        
         valid_pass = helper.custom_password_check(password1)
         if valid_pass['password_ok']==False:
