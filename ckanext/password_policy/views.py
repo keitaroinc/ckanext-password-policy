@@ -102,14 +102,12 @@ class PerformResetView_(PerformResetView):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
 
-        password_length = config.get('ckan.password_policy.password_length')
+        password_length = int(config.get('ckanext.password_policy.password_length', 12))
        
         valid_pass = helper.custom_password_check(password1)
         if valid_pass['password_ok']==False:
             raise ValueError(
-                _(f"u'Your password must be {password_length} characters or '"
-                  u'longer and contain uppercase, lowercase, '
-                  u'digit and special character'))
+                _(f'Your password must be 12 characters or longer and contain uppercase, lowercase, digit and special character'))
         elif password1 != password2:
             raise ValueError(
                 _(u'The passwords you entered'
@@ -128,7 +126,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
         the ``environ``.
 
         '''
-        allowed_failes_logins = int(config.get('ckan.password_policy.failed_logins', 3))
+        allowed_failes_logins = int(config.get('ckanext.password_policy.failed_logins', 3))
         request = Request(environ, charset=self.charset)
 
         path_info = environ[u'PATH_INFO']

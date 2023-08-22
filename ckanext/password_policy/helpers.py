@@ -7,7 +7,7 @@ def user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
     if user_cached == None:
-        expiry = config.get('ckan.password_policy.user_locked_time', 600)
+        expiry = config.get('ckanext.password_policy.user_locked_time', 600)
         # user will be cached in redis with count 1
         redis_conn.set(username, 1, ex=expiry)
     else:
@@ -38,7 +38,7 @@ def custom_password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    password_length = int(config.get('ckan.password_policy.password_length', 12))
+    password_length = int(config.get('ckanext.password_policy.password_length', 12))
     # calculating the length
     length_error = len(password) < password_length
 
