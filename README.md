@@ -28,12 +28,14 @@ To install ckanext-password-policy:
 
 2. Clone the source and install it on the virtualenv
 
+   ``` 
     git clone https://github.com/Keitaro/ckanext-password-policy.git
     cd ckanext-password-policy
     pip install -e .
-	pip install -r requirements.txt
+    pip install -r requirements.txt
+   ``` 
 
-3. Add `password-policy` to the `ckan.plugins` setting in your CKAN
+3. Add `password_policy` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 

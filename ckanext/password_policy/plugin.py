@@ -4,11 +4,13 @@ import ckanext.password_policy.views as views
 import ckan.lib.navl.dictization_functions as df
 import ckanext.password_policy.helpers as h
 from six import string_types
-from ckan.common import _
+from ckan.common import _, config
 
 
 Missing = df.Missing
 missing = df.missing
+
+password_length = config.get('ckan.password_policy.password_length')
 
 
 def user_custom_password_validator(key, data, errors, context):
@@ -22,7 +24,7 @@ def user_custom_password_validator(key, data, errors, context):
     elif value == '':
         pass
     elif not valid_pass['password_ok']:
-        errors[('password',)].append(_('Your password must be 12 characters or '
+        errors[('password',)].append(_(f'Your password must be {password_length} characters or '
                                        'longer and contain uppercase, lowercase, '
                                        'digit and special character'))
 
