@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block primary_content %}
-{{ 'user locked' }}
+<br>
+{{ h.lockout_time()  }}
 {% endblock %}
 
 {% block secondary_content %}

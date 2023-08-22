@@ -102,7 +102,7 @@ class PerformResetView_(PerformResetView):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
 
-        password_length = config.get('ckan.password_policy.password_length')
+        password_length = config.get('ckanext.password_policy.password_length')
        
         valid_pass = helper.custom_password_check(password1)
         if valid_pass['password_ok']==False:
@@ -128,7 +128,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
         the ``environ``.
 
         '''
-        allowed_failes_logins = int(config.get('ckan.password_policy.failed_logins', 3))
+        allowed_failes_logins = int(config.get('ckanext.password_policy.failed_logins', 3))
         request = Request(environ, charset=self.charset)
 
         path_info = environ[u'PATH_INFO']
@@ -253,7 +253,11 @@ def logged_in():
 
 def locked_user():
 
+    alert = helper.lockout_time()
+    
+
     extra_vars = {}
+    extra_vars['alert'] = alert
     return base.render(u'user/locked.html', extra_vars)
 
 

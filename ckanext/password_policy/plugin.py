@@ -10,7 +10,7 @@ from ckan.common import _, config
 Missing = df.Missing
 missing = df.missing
 
-password_length = config.get('ckan.password_policy.password_length')
+password_length = config.get('ckanext.password_policy.password_length')
 
 
 def user_custom_password_validator(key, data, errors, context):
@@ -34,6 +34,7 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IValidators)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IAuthenticator, inherit=True)
+    plugins.implements(plugins.ITemplateHelpers)
 
     
 
@@ -51,4 +52,7 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     def get_blueprint(self):
         return views.get_blueprints()
 
+
+    def get_helpers(self):
+        return {'lockout_time': h.lockout_time}
 
