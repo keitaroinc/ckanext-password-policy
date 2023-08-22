@@ -1,5 +1,3 @@
-[![Tests](https://github.com/Keitaro/ckanext-password-policy/workflows/Tests/badge.svg?branch=main)](https://github.com/Keitaro/ckanext-password-policy/actions)
-
 # CKAN password policy 
 
 CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
@@ -46,6 +44,11 @@ To install ckanext-password-policy:
 
 ## Config settings
 
+1. The following setting needs to be done in who.ini
+	[plugin:friendlyform]
+	use = ckanext.password_policy.views:FriendlyFormPlugin_
+
+2. These are the settings for production.ini
 	Minimum length of the user password. Default is 12
 	ckan.password_policy.password_length = 12
 
