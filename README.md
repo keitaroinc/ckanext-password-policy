@@ -45,25 +45,25 @@ To install ckanext-password-policy:
 ## Config settings
 
 1. The following setting needs to be done in who.ini
-
-	'''
+	
+   	```
 	[plugin:friendlyform]
 	use = ckanext.password_policy.views:FriendlyFormPlugin_
-	'''
+  	```
 
 
 2. These are the settings for production.ini
 
-	'''
+   	```
 	Minimum length of the user password. Default is 12
 	ckan.password_policy.password_length = 12
 
 	Number of failed logins before the user is locked. Default is 3
-	ckan.password_policy.failed_logins = 3
+ 	ckan.password_policy.failed_logins = 3
 
 	Time after the locked user is allowed to log in again in seconds. Default is 600 
 	ckan.password_policy.user_locked_time = 600
-	'''
+	```
 
 
 
