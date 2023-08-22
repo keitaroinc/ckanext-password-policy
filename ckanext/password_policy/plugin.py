@@ -24,7 +24,7 @@ def user_custom_password_validator(key, data, errors, context):
     elif value == '':
         pass
     elif not valid_pass['password_ok']:
-        errors[('password',)].append('Your password must be 12 characters or longer and contain uppercase, lowercase, digit and special character')
+        errors[('password',)].append(_('Your password must be 12 characters or longer and contain uppercase, lowercase, digit and special character'))
 
      
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
