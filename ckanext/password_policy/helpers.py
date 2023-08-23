@@ -7,7 +7,7 @@ def user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
     if user_cached == None:
-        expiry = config.get('ckanext.password_policy.user_locked_time', 600)
+        expiry = config.get('ckanext.password_policy.user_locked_time', 900)
         # user will be cached in redis with count 1
         redis_conn.set(username, 1, ex=expiry)
     else:
