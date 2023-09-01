@@ -7,9 +7,10 @@
 {% endblock %}
 
 {% block primary_content %}
-<div>
-  <h3>{{ 'User locked. Please try again in 15 minutes.' }}</h3>
-</div>
+
+<br>
+{{ h.lockout_time()  }}
+
 {% endblock %}
 
 {% block secondary_content %}
