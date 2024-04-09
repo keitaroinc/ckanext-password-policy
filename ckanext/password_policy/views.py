@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from __future__ import unicode_literals
 from builtins import int
 from builtins import dict
 from builtins import str
@@ -285,14 +284,14 @@ def logout():
 
 
 custom_user.add_url_rule(
-    u'/register', view_func=RegisterView_.as_view(str(u'register')))
+    u'/register', view_func=RegisterView_.as_view('register'))
 
-_edit_view = EditView_.as_view(str(u'edit'))
+_edit_view = EditView_.as_view('edit')
 custom_user.add_url_rule(u'/edit', view_func=_edit_view)
 custom_user.add_url_rule(u'/edit/<id>', view_func=_edit_view)
 
 custom_user.add_url_rule(
-    u'/reset/<id>', view_func=PerformResetView_.as_view(str(u'perform_reset')))
+    u'/reset/<id>', view_func=PerformResetView_.as_view('perform_reset'))
 
 custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "POST"))
