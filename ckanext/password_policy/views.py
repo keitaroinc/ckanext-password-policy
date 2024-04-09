@@ -8,7 +8,7 @@ from builtins import str
 from future import standard_library
 standard_library.install_aliases()
 from ckan.views.user import RegisterView, EditView, PerformResetView
-from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
+from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.lib.base as base
