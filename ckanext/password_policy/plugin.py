@@ -1,3 +1,9 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.password_policy.views as views
@@ -24,19 +30,19 @@ def user_custom_password_validator(key, data, errors, context):
     elif value == '':
         pass
     elif not valid_pass['password_ok']:
-        errors[('password',)].append(_(f'Your password must be {password_length} characters or '
+        errors[('password',)].append(_('Your password must be {} characters or '
                                        'longer and contain uppercase, lowercase, '
-                                       'digit and special character'))
+                                       'digit and special character'.format(password_length)))
 
-     
+
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IConfigurer) 
+    plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IValidators)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IAuthenticator, inherit=True)
     plugins.implements(plugins.ITemplateHelpers)
 
-    
+
 
     # IConfigurer
 
@@ -45,10 +51,10 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic',
             'password_policy')
-        
+
     def get_validators(self):
         return {'user_custom_password_validator': user_custom_password_validator}
-    
+
     def get_blueprint(self):
         return views.get_blueprints()
 
