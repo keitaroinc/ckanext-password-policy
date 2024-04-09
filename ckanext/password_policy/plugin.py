@@ -12,16 +12,14 @@ import ckanext.password_policy.helpers as h
 from six import string_types
 from ckan.common import _, config
 
-
 Missing = df.Missing
 missing = df.missing
-
-password_length = config.get('ckanext.password_policy.password_length')
 
 
 def user_custom_password_validator(key, data, errors, context):
     value = data[key]
     valid_pass = h.custom_password_check(value)
+    password_length = config.get('ckanext.password_policy.password_length')
 
     if isinstance(value, Missing):
         pass
