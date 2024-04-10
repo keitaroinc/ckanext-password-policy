@@ -51,7 +51,7 @@ def custom_password_check(password, username=None):
     Verify the strength of 'password'
     Returns a dict indicating the wrong criteria
     A password is considered strong if:
-        10 characters length or more (18 for sysadmins)
+        length is at least the configured minimum length
         1 digit or more
         1 symbol or more
         1 uppercase letter or more
