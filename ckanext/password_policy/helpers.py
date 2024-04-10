@@ -110,14 +110,17 @@ def custom_password_check(password, username=None, fullname=None):
 
 
 def lockout_time():
+    failed_logins = config.get('ckanext.password_policy.failed_logins')
     lockout = config.get('ckanext.password_policy.user_locked_time')
 
     time_to_int = int(lockout)
 
     if time_to_int >= 60:
         time_in_minutes = time_to_int//60
-        alert = " You failed 3 attempts to login and you have been locked out for {} minutes. Try again later.".format(time_in_minutes)
+        alert = "You failed {} attempts to login and you have been locked out " \
+                "for {} minutes. Try again later.".format(failed_logins, time_in_minutes)
         return alert
     else:
-        alert = "You failed 3 attempts to login and you have been locked out for {} seconds. Try again later.".format(time_to_int)
+        alert = "You failed {} attempts to login and you have been locked out " \
+                "for {} seconds. Try again later.".format(failed_logins, time_to_int)
         return alert
