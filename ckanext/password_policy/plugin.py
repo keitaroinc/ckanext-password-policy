@@ -19,7 +19,7 @@ missing = df.missing
 def user_custom_password_validator(key, data, errors, context):
     value = data[key]
     valid_pass = h.custom_password_check(value)
-    password_length = config.get('ckanext.password_policy.password_length')
+    password_length = h.get_password_length()
 
     if isinstance(value, Missing):
         pass

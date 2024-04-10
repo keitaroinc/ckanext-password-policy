@@ -6,8 +6,9 @@ from builtins import int
 from future import standard_library
 standard_library.install_aliases()
 import re
+from ckan.authz import is_sysadmin
 from ckan.lib.redis import connect_to_redis
-from ckan.common import config
+from ckan.common import config, g
 
 
 def user_login_count(username):
@@ -34,18 +35,29 @@ def clear_login_count(username):
     return None
 
 
+def get_password_length():
+    if is_sysadmin(g.user):
+        return int(
+            config.get('ckanext.password_policy.password_length_sysadmin', 18)
+        )
+    return int(
+        config.get('ckanext.password_policy.password_length', 10)
+    )
+
+
 def custom_password_check(password):
     """
     Verify the strength of 'password'
     Returns a dict indicating the wrong criteria
     A password is considered strong if:
-        12 characters length or more
+        10 characters length or more (18 for sysadmins)
         1 digit or more
         1 symbol or more
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    password_length = int(config.get('ckanext.password_policy.password_length', 12))
+    password_length = get_password_length()
+
     # calculating the length
     length_error = len(password) < password_length
 
@@ -72,6 +84,7 @@ def custom_password_check(password):
         'lowercase_error': lowercase_error,
         'symbol_error': symbol_error,
     }
+
 
 def lockout_time():
     lockout = config.get('ckanext.password_policy.user_locked_time')
