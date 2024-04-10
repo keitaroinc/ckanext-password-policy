@@ -7,7 +7,6 @@ from builtins import str
 from future import standard_library
 standard_library.install_aliases()
 from ckan.views.user import RegisterView, EditView, PerformResetView
-from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.lib.base as base
@@ -25,6 +24,10 @@ try:
     from webob.multidict import MultiDict
 except ImportError:
     from webob import UnicodeMultiDict as MultiDict
+try:
+    from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
+except ImportError:
+    from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 
 
 custom_user = Blueprint(u'custom_user', __name__, url_prefix=u'/user')
