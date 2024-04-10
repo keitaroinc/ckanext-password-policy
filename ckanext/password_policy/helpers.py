@@ -1,3 +1,10 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import int
+from future import standard_library
+standard_library.install_aliases()
 import re
 from ckan.lib.redis import connect_to_redis
 from ckan.common import config
@@ -73,8 +80,8 @@ def lockout_time():
 
     if time_to_int >= 60:
         time_in_minutes = time_to_int//60
-        alert = f" You failed 3 atempts to login and you have been locked out for {time_in_minutes} minutes. Try again later."
+        alert = " You failed 3 atempts to login and you have been locked out for {} minutes. Try again later.".format(time_in_minutes)
         return alert
     else:
-        alert = f"You failed 3 atempts to login and you have been locked out for {time_to_int} seconds. Try again later."
+        alert = "You failed 3 atempts to login and you have been locked out for {} seconds. Try again later.".format(time_to_int)
         return alert
