@@ -1,6 +1,11 @@
 # CKAN password policy 
 
-CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
+CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length
+and password complexity (password must consist capital and small letters, number and special characters, and may not
+contain the user's name or username). A user lock on defined time period after x number of failed logins is also
+implemented.
+
+This extension is compatible with CKAN 2.8 and 2.9.
 
 
 ## Requirements
