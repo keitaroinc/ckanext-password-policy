@@ -46,7 +46,7 @@ def get_password_length(username=None):
     )
 
 
-def custom_password_check(password, username=None):
+def custom_password_check(password, username=None, fullname=None):
     """
     Verify the strength of 'password'
     Returns a dict indicating the wrong criteria
@@ -57,6 +57,9 @@ def custom_password_check(password, username=None):
         1 uppercase letter or more
         1 lowercase letter or more
     """
+    username = username or g.user
+    fullname = fullname or g.userobj.fullname
+
     password_length = get_password_length(username)
 
     # calculating the length
@@ -74,8 +77,25 @@ def custom_password_check(password, username=None):
     # searching for symbols
     symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
 
+    # searching for username or fullname
+    username_error = re.search(username.lower(), password.lower()) is not None
+
+    fullname_error = False
+    for name_part in fullname.lower().split(" "):
+        if re.search(name_part, password.lower()) is not None:
+            fullname_error = True
+            break
+
     # overall result
-    password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+    password_ok = not (
+            length_error
+            or digit_error
+            or uppercase_error
+            or lowercase_error
+            or symbol_error
+            or username_error
+            or fullname_error
+    )
 
     return {
         'password_ok': password_ok,
@@ -84,6 +104,8 @@ def custom_password_check(password, username=None):
         'uppercase_error': uppercase_error,
         'lowercase_error': lowercase_error,
         'symbol_error': symbol_error,
+        'username_error': username_error,
+        'fullname_error': fullname_error,
     }
 
 

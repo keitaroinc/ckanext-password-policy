@@ -19,7 +19,9 @@ missing = df.missing
 def user_custom_password_validator(key, data, errors, context):
     value = data[key]
     username = data.get(('name',))
-    valid_pass = h.custom_password_check(value, username)
+    user_fullname = data.get(('fullname',))
+
+    valid_pass = h.custom_password_check(value, username, user_fullname)
     password_length = h.get_password_length(username)
 
     if isinstance(value, Missing):
@@ -31,7 +33,9 @@ def user_custom_password_validator(key, data, errors, context):
     elif not valid_pass['password_ok']:
         errors[('password',)].append(_('Your password must be {} characters or '
                                        'longer and contain uppercase, lowercase, '
-                                       'digit and special character'.format(password_length)))
+                                       'digit and special character. '
+                                       'Your password may not contain your username '
+                                       'or part of your full name.'.format(password_length)))
 
 
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
