@@ -80,8 +80,8 @@ def lockout_time():
 
     if time_to_int >= 60:
         time_in_minutes = time_to_int//60
-        alert = " You failed 3 atempts to login and you have been locked out for {} minutes. Try again later.".format(time_in_minutes)
+        alert = " You failed 3 attempts to login and you have been locked out for {} minutes. Try again later.".format(time_in_minutes)
         return alert
     else:
-        alert = "You failed 3 atempts to login and you have been locked out for {} seconds. Try again later.".format(time_to_int)
+        alert = "You failed 3 attempts to login and you have been locked out for {} seconds. Try again later.".format(time_to_int)
         return alert
