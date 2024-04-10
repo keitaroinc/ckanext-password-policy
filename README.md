@@ -7,12 +7,12 @@ CKAN extension that adds password policy for all the users. With this extension 
 
 Compatibility with core CKAN versions:
 
-| CKAN version    | Compatible?   |
-| --------------- | ------------- |
-| 2.6 and earlier | not tested    |
-| 2.7             | not tested    |
-| 2.8             | not tested    |
-| 2.9             | Yes    |
+| CKAN version    | Compatible? |
+| --------------- |-------------|
+| 2.6 and earlier | not tested  |
+| 2.7             | not tested  |
+| 2.8             | Yes         |
+| 2.9             | Yes         |
 
 
 
