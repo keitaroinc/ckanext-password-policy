@@ -35,8 +35,9 @@ def clear_login_count(username):
     return None
 
 
-def get_password_length():
-    if is_sysadmin(g.user):
+def get_password_length(username=None):
+    user = username or g.user
+    if is_sysadmin(user):
         return int(
             config.get('ckanext.password_policy.password_length_sysadmin', 18)
         )
@@ -45,7 +46,7 @@ def get_password_length():
     )
 
 
-def custom_password_check(password):
+def custom_password_check(password, username=None):
     """
     Verify the strength of 'password'
     Returns a dict indicating the wrong criteria
@@ -56,7 +57,7 @@ def custom_password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    password_length = get_password_length()
+    password_length = get_password_length(username)
 
     # calculating the length
     length_error = len(password) < password_length

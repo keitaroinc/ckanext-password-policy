@@ -18,8 +18,9 @@ missing = df.missing
 
 def user_custom_password_validator(key, data, errors, context):
     value = data[key]
-    valid_pass = h.custom_password_check(value)
-    password_length = h.get_password_length()
+    username = data.get(('name',))
+    valid_pass = h.custom_password_check(value, username)
+    password_length = h.get_password_length(username)
 
     if isinstance(value, Missing):
         pass
