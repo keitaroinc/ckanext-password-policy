@@ -58,7 +58,7 @@ def custom_password_check(password, username=None, fullname=None):
         1 lowercase letter or more
     """
     username = username or g.user
-    fullname = fullname or g.userobj.fullname
+    fullname = fullname or g.userobj.fullname or ""
 
     password_length = get_password_length(username)
 
