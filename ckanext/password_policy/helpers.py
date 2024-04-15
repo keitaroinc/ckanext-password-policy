@@ -6,6 +6,7 @@ from builtins import int
 from future import standard_library
 standard_library.install_aliases()
 import re
+import ckan.plugins.toolkit as toolkit
 from ckan.authz import is_sysadmin
 from ckan.lib.redis import connect_to_redis
 from ckan.common import config, g
@@ -15,7 +16,11 @@ def user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
     if user_cached == None:
-        expiry = config.get('ckanext.password_policy.user_locked_time', 600)
+        require_sysadmin = toolkit.asbool(
+            config.get("ckanext.password_policy.require_sysadmin_unlock", False)
+        )
+        expiry = None if require_sysadmin else \
+            config.get('ckanext.password_policy.user_locked_time', 600)
         # user will be cached in redis with count 1
         redis_conn.set(username, 1, ex=expiry)
     else:
@@ -109,18 +114,27 @@ def custom_password_check(password, username=None, fullname=None):
     }
 
 
-def lockout_time():
+def lockout_message():
+    require_sysadmin = toolkit.asbool(
+        config.get("ckanext.password_policy.require_sysadmin_unlock", False)
+    )
     failed_logins = config.get('ckanext.password_policy.failed_logins')
-    lockout = config.get('ckanext.password_policy.user_locked_time')
 
+    if require_sysadmin:
+        return "You failed {} attempts to login and you have been locked out. " \
+               "Contact a sysadmin to re-enable you to login."
+
+    lockout = config.get('ckanext.password_policy.user_locked_time')
     time_to_int = int(lockout)
 
     if time_to_int >= 60:
         time_in_minutes = time_to_int//60
         alert = "You failed {} attempts to login and you have been locked out " \
-                "for {} minutes. Try again later.".format(failed_logins, time_in_minutes)
+                "for {} minutes. Try again later or contact a sysadmin.".format(
+                    failed_logins, time_in_minutes)
         return alert
     else:
         alert = "You failed {} attempts to login and you have been locked out " \
-                "for {} seconds. Try again later.".format(failed_logins, time_to_int)
+                "for {} seconds. Try again later or contact a sysadmin.".format(
+                    failed_logins, time_to_int)
         return alert

@@ -61,13 +61,16 @@ To install ckanext-password-policy:
 
    	```
 	Minimum length of the user password. Default is 12
-	ckan.password_policy.password_length = 12
+	ckanext.password_policy.password_length = 12
 
 	Number of failed logins before the user is locked. Default is 3
- 	ckan.password_policy.failed_logins = 3
+ 	ckanext.password_policy.failed_logins = 3
 
 	Time after the locked user is allowed to log in again in seconds. Default is 600 
-	ckan.password_policy.user_locked_time = 600
+	ckanext.password_policy.user_locked_time = 600
+
+	Whether a sysadmin must re-enable the locked user to login, instead of just waiting. Default is False
+	ckanext.password_policy.require_sysadmin_unlock
 	```
 
 
