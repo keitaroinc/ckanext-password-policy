@@ -63,5 +63,5 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
 
 
     def get_helpers(self):
-        return {'lockout_time': h.lockout_time}
+        return {'lockout_message': h.lockout_message}
 

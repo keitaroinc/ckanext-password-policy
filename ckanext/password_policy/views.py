@@ -269,7 +269,7 @@ def logged_in():
 
 def locked_user():
 
-    alert = helper.lockout_time()
+    alert = helper.lockout_message()
 
 
     extra_vars = {}
