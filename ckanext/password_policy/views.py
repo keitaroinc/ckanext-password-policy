@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+import logging
+
 from builtins import int
 from builtins import dict
 from builtins import str
@@ -28,6 +31,8 @@ try:
     from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
 except ImportError:
     from repoze.who.plugins.friendlyform import FriendlyFormPlugin
+
+log = logging.getLogger(__name__)
 
 
 custom_user = Blueprint(u'custom_user', __name__, url_prefix=u'/user')
@@ -286,6 +291,14 @@ def logout():
         parse_url=True)
 
 
+def reset_login(username):
+    log.debug("Re-enabling login for user {}".format(username))
+    helper.clear_login_count(username)
+
+    h.flash_success(_(u'User login re-enabled'))
+    return h.redirect_to(u'user.read', id=username)
+
+
 custom_user.add_url_rule(
     u'/register', view_func=RegisterView_.as_view('register'))
 
@@ -301,6 +314,7 @@ custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "PO
 
 custom_user.add_url_rule(u'/locked', view_func=locked_user, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/_logout', view_func=logout)
+custom_user.add_url_rule(u'/reset_login/<username>', view_func=reset_login, methods=("POST",))
 
 
 def get_blueprints():
