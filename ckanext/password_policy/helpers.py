@@ -122,7 +122,8 @@ def lockout_message():
 
     if require_sysadmin:
         return "You failed {} attempts to login and you have been locked out. " \
-               "Contact a sysadmin to re-enable you to login."
+               "Contact a sysadmin to re-enable you to login.".format(
+                    failed_logins)
 
     lockout = config.get('ckanext.password_policy.user_locked_time')
     time_to_int = int(lockout)
