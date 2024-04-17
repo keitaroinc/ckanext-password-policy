@@ -8,6 +8,7 @@ standard_library.install_aliases()
 import re
 import ckan.plugins.toolkit as toolkit
 from ckan.authz import is_sysadmin
+from ckan.common import _
 from ckan.lib.redis import connect_to_redis
 from ckan.common import config, g
 
@@ -51,7 +52,18 @@ def get_password_length(username=None):
     )
 
 
-def custom_password_check(password, username=None, fullname=None):
+def requirements_message(password_length=None, username=None):
+    if not password_length:
+        password_length = get_password_length(username)
+
+    return _('Your password must be {} characters or '
+             'longer and contain uppercase, lowercase, '
+             'digit and special character. '
+             'Your password may not contain your username '
+             'or part of your full name.'.format(password_length))
+
+
+def custom_password_check(password, username="", fullname=""):
     """
     Verify the strength of 'password'
     Returns a dict indicating the wrong criteria
@@ -62,8 +74,11 @@ def custom_password_check(password, username=None, fullname=None):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    username = username or g.user
-    fullname = fullname or g.userobj.fullname or ""
+    if not username and g.user:
+        username = g.user
+
+    if not fullname and g.userobj:
+        fullname = g.userobj.fullname
 
     password_length = get_password_length(username)
 
@@ -83,13 +98,15 @@ def custom_password_check(password, username=None, fullname=None):
     symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
 
     # searching for username or fullname
-    username_error = re.search(username.lower(), password.lower()) is not None
+    username_error = username and re.search(username.lower(),
+                                            password.lower()) is not None
 
     fullname_error = False
-    for name_part in fullname.lower().split(" "):
-        if re.search(name_part, password.lower()) is not None:
-            fullname_error = True
-            break
+    if fullname:
+        for name_part in fullname.lower().split(" "):
+            if re.search(name_part, password.lower()) is not None:
+                fullname_error = True
+                break
 
     # overall result
     password_ok = not (
