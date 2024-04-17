@@ -8,6 +8,7 @@ standard_library.install_aliases()
 import re
 import ckan.plugins.toolkit as toolkit
 from ckan.authz import is_sysadmin
+from ckan.common import _
 from ckan.lib.redis import connect_to_redis
 from ckan.common import config, g
 
@@ -49,6 +50,17 @@ def get_password_length(username=None):
     return int(
         config.get('ckanext.password_policy.password_length', 10)
     )
+
+
+def requirements_message(password_length=None, username=None):
+    if not password_length:
+        password_length = get_password_length(username)
+
+    return _('Your password must be {} characters or '
+             'longer and contain uppercase, lowercase, '
+             'digit and special character. '
+             'Your password may not contain your username '
+             'or part of your full name.'.format(password_length))
 
 
 def custom_password_check(password, username="", fullname=""):

@@ -121,11 +121,8 @@ class PerformResetView_(PerformResetView):
         password_length = helper.get_password_length()
 
         valid_pass = helper.custom_password_check(password1)
-        if valid_pass['password_ok']==False:
-            raise ValueError(
-                _("u'Your password must be {} characters or '"
-                  u'longer and contain uppercase, lowercase, '
-                  u'digit and special character'.format(password_length)))
+        if not valid_pass['password_ok']:
+            raise ValueError(helper.requirements_message(password_length))
         elif password1 != password2:
             raise ValueError(
                 _(u'The passwords you entered'

@@ -31,11 +31,9 @@ def user_custom_password_validator(key, data, errors, context):
     elif value == '':
         pass
     elif not valid_pass['password_ok']:
-        errors[('password',)].append(_('Your password must be {} characters or '
-                                       'longer and contain uppercase, lowercase, '
-                                       'digit and special character. '
-                                       'Your password may not contain your username '
-                                       'or part of your full name.'.format(password_length)))
+        errors[('password',)].append(
+            h.requirements_message(password_length)
+        )
 
 
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
@@ -63,5 +61,8 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
 
 
     def get_helpers(self):
-        return {'lockout_message': h.lockout_message}
+        return {
+            'lockout_message': h.lockout_message,
+            'requirements_message': h.requirements_message,
+        }
 
