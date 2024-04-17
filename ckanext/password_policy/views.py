@@ -118,6 +118,10 @@ class PerformResetView_(PerformResetView):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
 
+        if not password1 or not password2:
+            msg = _(u'You must provide a password')
+            raise ValueError(msg)
+
         password_length = helper.get_password_length()
 
         valid_pass = helper.custom_password_check(password1)
@@ -128,8 +132,6 @@ class PerformResetView_(PerformResetView):
                 _(u'The passwords you entered'
                     u' do not match.'))
         return password1
-        msg = _(u'You must provide a password')
-        raise ValueError(msg)
 
 
 class FriendlyFormPlugin_(FriendlyFormPlugin):
