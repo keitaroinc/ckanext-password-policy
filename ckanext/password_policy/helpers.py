@@ -74,10 +74,10 @@ def custom_password_check(password, username="", fullname=""):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    if not username and g.user:
+    if not username and hasattr(g, "user"):
         username = g.user
 
-    if not fullname and g.userobj:
+    if not fullname and hasattr(g, "userobj"):
         fullname = g.userobj.fullname
 
     password_length = get_password_length(username)
