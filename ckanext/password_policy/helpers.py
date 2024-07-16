@@ -95,7 +95,7 @@ def custom_password_check(password, username="", fullname=""):
     lowercase_error = re.search(r"[a-z]", password) is None
 
     # searching for symbols
-    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
+    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~@"+r'"]', password) is None
 
     # searching for username or fullname
     username_error = username and re.search(username.lower(),
