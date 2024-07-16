@@ -58,7 +58,7 @@ def requirements_message(password_length=None, username=None):
 
     return _('Your password must be {} characters or '
              'longer and contain uppercase, lowercase, '
-             'digit and special character. '
+             'digit, and special character ( [ !#$%&\'()*+,-./[]^_`{{|}}~@" ).'
              'Your password may not contain your username '
              'or part of your full name.'.format(password_length))
 
