@@ -58,7 +58,7 @@ def requirements_message(password_length=None, username=None):
 
     return _('Your password must be {} characters or '
              'longer and contain uppercase, lowercase, '
-             'digit and special character. '
+             'digit, and special character ( !#$%&\'()*+,-./[\\]^_`{|}~@" ). '
              'Your password may not contain your username '
              'or part of your full name.'.format(password_length))
 
@@ -95,7 +95,7 @@ def custom_password_check(password, username="", fullname=""):
     lowercase_error = re.search(r"[a-z]", password) is None
 
     # searching for symbols
-    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
+    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~@"+r'"]', password) is None
 
     # searching for username or fullname
     username_error = username and re.search(username.lower(),
