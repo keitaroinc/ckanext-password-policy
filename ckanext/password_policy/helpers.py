@@ -16,7 +16,7 @@ from ckan.common import config, g
 def user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
-    if user_cached == None:
+    if user_cached is None:
         require_sysadmin = toolkit.asbool(
             config.get("ckanext.password_policy.require_sysadmin_unlock", False)
         )

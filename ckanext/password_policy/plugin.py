@@ -43,8 +43,6 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IAuthenticator, inherit=True)
     plugins.implements(plugins.ITemplateHelpers)
 
-
-
     # IConfigurer
 
     def update_config(self, config_):
