@@ -43,8 +43,6 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IAuthenticator, inherit=True)
     plugins.implements(plugins.ITemplateHelpers)
 
-
-
     # IConfigurer
 
     def update_config(self, config_):
@@ -64,5 +62,6 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
         return {
             'lockout_message': h.lockout_message,
             'requirements_message': h.requirements_message,
+            'user_locked_out': h.user_locked_out,
         }
 
