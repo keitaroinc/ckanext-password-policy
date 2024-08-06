@@ -175,7 +175,8 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 credentials[u'max_age'] = form[u'remember']
             except KeyError:
                 pass
-            if helper.user_login_count(login) < allowed_failed_logins:
+
+            if helper.increment_user_login_count(login) < allowed_failed_logins:
                 referer = environ.get(u'HTTP_REFERER', script_name)
                 destination = form.get(u'came_from', referer)
 

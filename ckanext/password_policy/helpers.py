@@ -13,7 +13,7 @@ from ckan.lib.redis import connect_to_redis
 from ckan.common import config, g
 
 
-def user_login_count(username):
+def increment_user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
     if user_cached is None:
