@@ -143,6 +143,8 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
         the ``environ``.
 
         '''
+        allowed_failed_logins = int(
+            config.get('ckanext.password_policy.failed_logins', 3))
         request = Request(environ, charset=self.charset)
 
         path_info = environ[u'PATH_INFO']
@@ -173,7 +175,7 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 credentials[u'max_age'] = form[u'remember']
             except KeyError:
                 pass
-            if not helper.user_locked_out(login):
+            if helper.user_login_count(login) < allowed_failed_logins:
                 referer = environ.get(u'HTTP_REFERER', script_name)
                 destination = form.get(u'came_from', referer)
 
