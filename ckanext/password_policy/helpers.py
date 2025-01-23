@@ -44,6 +44,16 @@ def user_locked_out(username):
         int(config.get('ckanext.password_policy.failed_logins', 3))
 
 
+def get_user_login_count(username):
+    redis_conn = connect_to_redis()
+    user_cached = redis_conn.get(username)
+
+    if user_cached is None:
+        return 0
+
+    return int(redis_conn.get(username))
+
+
 def clear_login_count(username):
 
     redis_conn = connect_to_redis()

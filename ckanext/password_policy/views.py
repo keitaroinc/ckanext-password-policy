@@ -176,6 +176,14 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
             except KeyError:
                 pass
 
+            log.info(
+                "User {} is logging in. They have {} previous failed logins "
+                "recorded.".format(
+                    login,
+                    helper.get_user_login_count(login)
+                )
+            )
+
             if helper.increment_user_login_count(login) < allowed_failed_logins:
                 referer = environ.get(u'HTTP_REFERER', script_name)
                 destination = form.get(u'came_from', referer)
@@ -200,6 +208,14 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
                 new_dest = 'user/locked'
                 environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
                 extra_vars = {}
+
+                log.info(
+                    "User {} just tried to log in with the wrong password. "
+                    "They now have {} failed logins recorded.".format(
+                        login,
+                        helper.get_user_login_count(login)
+                    )
+                )
                 return extra_vars
 
         elif path_info == self.logout_handler_path:
