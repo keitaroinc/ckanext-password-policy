@@ -1,7 +1,22 @@
 {% extends "user/login.html" %}
 
-{% block primary_content %}
-<br>
-{{ h.lockout_message()  }}
+{% block subtitle %}{{ _('Locked out') }}{% endblock %}
 
+{% block primary_content %}
+  <section class="module">
+    <div class="module-content">
+      <h1 class="page-heading">
+        {% block page_heading %}{{ _('Locked Out') }}{% endblock %}
+      </h1>
+      <p>{{ _(h.lockout_message()) }}</p>
+    </div>
+  </section>
+{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block secondary_content %}
+  <section class="module module-narrow module-shallow">
+  </section>
 {% endblock %}
