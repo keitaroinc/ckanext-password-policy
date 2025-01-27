@@ -332,7 +332,7 @@ def logout():
 
 
 def reset_login(username):
-    log.debug("Re-enabling login for user {}".format(username))
+    log.info("Re-enabling login for user {}".format(username))
     helper.clear_login_count(username)
 
     h.flash_success(_(u'User login re-enabled'))
