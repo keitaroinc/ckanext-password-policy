@@ -211,7 +211,8 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
 
                 log.info(
                     "User {} just tried to log in with the wrong password. "
-                    "They now have {} failed logins recorded.".format(
+                    "They now have {} failed logins recorded and are locked "
+                    "out.".format(
                         login,
                         helper.get_user_login_count(login)
                     )
@@ -278,8 +279,8 @@ def logged_in():
     if g.user:
         return me()
     else:
-
-        err = _(u'Login failed. Bad username or password')
+        log.info(u'Login failed. Bad username or password.')
+        err = _(u'Login failed. Bad username or password.')
         h.flash_error(err)
         return custom_login()
 
