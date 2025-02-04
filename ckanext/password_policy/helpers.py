@@ -51,7 +51,7 @@ def get_user_login_count(username):
     if user_cached is None:
         return 0
 
-    return int(redis_conn.get(username))
+    return int(user_cached)
 
 
 def clear_login_count(username):
