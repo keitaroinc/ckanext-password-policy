@@ -176,7 +176,19 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
             except KeyError:
                 pass
 
-            if helper.increment_user_login_count(login) < allowed_failed_logins:
+            log.info(
+                "User {} is logging in. They have {} previous failed logins "
+                "recorded.".format(
+                    login,
+                    helper.get_user_login_count(login)
+                )
+            )
+
+            new_user_login_count = helper.increment_user_login_count(login)
+
+            if new_user_login_count < allowed_failed_logins:
+                # The user has tried to log in with the wrong password fewer
+                # times than the limit we set
                 referer = environ.get(u'HTTP_REFERER', script_name)
                 destination = form.get(u'came_from', referer)
 
@@ -196,10 +208,37 @@ class FriendlyFormPlugin_(FriendlyFormPlugin):
 
                 environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
                 return credentials
-            else:
+            elif new_user_login_count == allowed_failed_logins:
+                # The user has already tried to log in with the wrong password
+                # as many times as the set limit. Now they're doing it again.
+                # We lock them out.
                 new_dest = 'user/locked'
                 environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
                 extra_vars = {}
+
+                log.info(
+                    "User {} just tried to log in with the wrong password. "
+                    "They now have {} failed logins recorded and are locked "
+                    "out.".format(
+                        login,
+                        helper.get_user_login_count(login)
+                    )
+                )
+                return extra_vars
+            else:
+                # The user is already locked out. It doesn't matter if they're
+                # using the right password or not.
+                new_dest = 'user/locked'
+                environ[u'repoze.who.application'] = HTTPFound(location=new_dest)
+                extra_vars = {}
+
+                log.info(
+                    "User {} just tried to log in, but they are locked out. "
+                    "They now have {} failed logins recorded.".format(
+                        login,
+                        helper.get_user_login_count(login)
+                    )
+                )
                 return extra_vars
 
         elif path_info == self.logout_handler_path:
@@ -262,8 +301,8 @@ def logged_in():
     if g.user:
         return me()
     else:
-
-        err = _(u'Login failed. Bad username or password')
+        log.info(u'Login failed. Bad username or password.')
+        err = _(u'Login failed. Bad username or password.')
         h.flash_error(err)
         return custom_login()
 
@@ -293,7 +332,7 @@ def logout():
 
 
 def reset_login(username):
-    log.debug("Re-enabling login for user {}".format(username))
+    log.info("Re-enabling login for user {}".format(username))
     helper.clear_login_count(username)
 
     h.flash_success(_(u'User login re-enabled'))

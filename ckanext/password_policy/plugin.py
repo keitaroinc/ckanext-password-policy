@@ -60,6 +60,7 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
 
     def get_helpers(self):
         return {
+            'get_user_login_count': h.get_user_login_count,
             'lockout_message': h.lockout_message,
             'requirements_message': h.requirements_message,
             'user_locked_out': h.user_locked_out,
