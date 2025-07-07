@@ -47,10 +47,10 @@ To temporary patch the CKAN configuration for the duration of a test you can use
     def test_some_action():
         pass
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 from future import standard_library
 standard_library.install_aliases()
 import ckanext.password_policy.plugin as plugin
