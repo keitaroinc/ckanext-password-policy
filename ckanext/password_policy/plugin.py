@@ -1,9 +1,4 @@
 
-
-
-
-from future import standard_library
-standard_library.install_aliases()
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import ckanext.password_policy.views as views

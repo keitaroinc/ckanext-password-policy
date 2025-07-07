@@ -1,14 +1,9 @@
 
-
-
-
 import logging
 
 from builtins import int
 from builtins import dict
 from builtins import str
-from future import standard_library
-standard_library.install_aliases()
 from ckan.views.user import RegisterView, EditView, PerformResetView
 import ckan.logic as logic
 import ckan.plugins as plugins

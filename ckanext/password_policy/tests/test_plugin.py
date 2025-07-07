@@ -50,9 +50,6 @@ To temporary patch the CKAN configuration for the duration of a test you can use
 
 
 
-
-from future import standard_library
-standard_library.install_aliases()
 import ckanext.password_policy.plugin as plugin
 
 def test_plugin():

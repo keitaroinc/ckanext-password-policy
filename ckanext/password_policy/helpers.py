@@ -1,10 +1,5 @@
 
-
-
-
 from builtins import int
-from future import standard_library
-standard_library.install_aliases()
 import re
 import ckan.plugins.toolkit as toolkit
 from ckan.authz import is_sysadmin
