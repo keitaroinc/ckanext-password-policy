@@ -21,11 +21,7 @@ from six.moves.urllib.parse import urlencode
 try:
     from webob.multidict import MultiDict
 except ImportError:
-    from webob import UnicodeMultiDict as MultiDict
-try:
-    from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
-except ImportError:
-    from repoze.who.plugins.friendlyform import FriendlyFormPlugin
+    from webob.multidict import UnicodeMultiDict as MultiDict
 
 log = logging.getLogger(__name__)
 
