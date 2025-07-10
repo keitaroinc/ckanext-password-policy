@@ -1,18 +1,18 @@
 
 from builtins import int
 import re
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 from ckan.authz import is_sysadmin
-from ckan.common import _
+from ckan.common import config
 from ckan.lib.redis import connect_to_redis
-from ckan.common import config, g
+from flask import g
 
 
 def increment_user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
     if user_cached is None:
-        require_sysadmin = toolkit.asbool(
+        require_sysadmin = tk.asbool(
             config.get("ckanext.password_policy.require_sysadmin_unlock", False)
         )
         expiry = None if require_sysadmin else \
@@ -71,7 +71,7 @@ def requirements_message(password_length=None, username=None):
     if not password_length:
         password_length = get_password_length(username)
 
-    return _('Your password must be {} characters or '
+    return tk._('Your password must be {} characters or '
              'longer and contain uppercase, lowercase, digit, '
              'and special character ( !#$%&\'()*+,-./[\\]^_`{{|}}~@" ). '
              'Your password may not contain your username '
@@ -147,7 +147,7 @@ def custom_password_check(password, username="", fullname=""):
 
 
 def lockout_message():
-    require_sysadmin = toolkit.asbool(
+    require_sysadmin = tk.asbool(
         config.get("ckanext.password_policy.require_sysadmin_unlock", False)
     )
     failed_logins = config.get('ckanext.password_policy.failed_logins')

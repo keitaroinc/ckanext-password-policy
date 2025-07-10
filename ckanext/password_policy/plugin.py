@@ -1,11 +1,13 @@
 
 import ckan.plugins as plugins
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins.toolkit as tk
 import ckanext.password_policy.views as views
 import ckan.lib.navl.dictization_functions as df
 import ckanext.password_policy.helpers as h
 from six import string_types
-from ckan.common import _, config
+from ckan.common import config
+from flask_login import LoginManager, UserMixin
+from ckan.model import User as CKANModelUser
 
 Missing = df.Missing
 missing = df.missing
@@ -22,13 +24,22 @@ def user_custom_password_validator(key, data, errors, context):
     if isinstance(value, Missing):
         pass
     elif not isinstance(value, string_types):
-        errors[('password',)].append(_('Passwords must be strings'))
+        errors[('password',)].append(tk._('Passwords must be strings'))
     elif value == '':
         pass
     elif not valid_pass['password_ok']:
         errors[('password',)].append(
             h.requirements_message(password_length)
         )
+
+
+# Wrapper class for flask-login
+class CKANUser(UserMixin):
+    def __init__(self, user: CKANModelUser):
+        self.id = str(user.id)
+        self.name = user.name
+        self.email = user.email
+        self.sysadmin = user.sysadmin
 
 
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
@@ -41,17 +52,31 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     # IConfigurer
 
     def update_config(self, config_):
-        toolkit.add_template_directory(config_, 'templates')
-        toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic',
+        # Templates and static
+        tk.add_template_directory(config_, 'templates')
+        tk.add_public_directory(config_, 'public')
+        tk.add_resource('assets',
             'password_policy')
+
+        # Initialize Flask-Login
+        login_manager = LoginManager()
+        app = config_.get('app') or tk.config.get('flask_app')
+        if app:
+            login_manager.init_app(app)
+            login_manager.login_view = 'password_policy.login'
+
+            @login_manager.user_loader
+            def load_user(user_id):
+                user = CKANModelUser.get(user_id)
+                if user:
+                    return CKANUser(user)
+                return None
 
     def get_validators(self):
         return {'user_custom_password_validator': user_custom_password_validator}
 
     def get_blueprint(self):
         return views.get_blueprints()
-
 
     def get_helpers(self):
         return {
