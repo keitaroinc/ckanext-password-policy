@@ -119,7 +119,7 @@ class PerformResetView_(PerformResetView):
 @custom_user.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('custom_user.me'))
+        return redirect(url_for('dashboard.datasets'))
 
     if request.method == 'POST':
         username = request.form.get('login')
@@ -140,7 +140,7 @@ def login():
             login_user(user_obj)
             helper.clear_login_count(username)
             return redirect(
-                request.args.get('next') or url_for('custom_user.me'))
+                request.args.get('next') or url_for('dashboard.datasets'))
         else:
             helper.increment_user_login_count(username)
             flash(tk._('Login failed. Bad username or password.'), 'error')
