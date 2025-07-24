@@ -7,6 +7,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from ckan.views.user import RegisterView, EditView, PerformResetView
 import ckan.logic as logic
 import ckan.plugins as plugins
+import ckan.lib.authenticator as authenticator
 import ckan.lib.base as base
 import ckan.model as model
 import ckan.plugins.toolkit as tk
@@ -128,7 +129,12 @@ def login():
             flash(helper.lockout_message(), 'error')
             return redirect(url_for('custom_user.locked'))
 
-        user_obj = helper.authenticate_user(username, password)
+        identity = {
+            u"login": username,
+            u"password": password
+        }
+
+        user_obj = authenticator.ckan_authenticator(identity)
 
         if user_obj:
             login_user(user_obj)
