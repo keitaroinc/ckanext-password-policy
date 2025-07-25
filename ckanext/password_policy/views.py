@@ -1,18 +1,18 @@
 import logging
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from six import text_type
-
 import ckan.lib.authenticator as authenticator
 import ckan.lib.base as base
 import ckan.lib.helpers as h
 import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as tk
-import ckanext.password_policy.helpers as helper
 from ckan.common import config, login_user, logout_user
 from ckan.views.user import EditView, PerformResetView, RegisterView
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from six import text_type
+
+import ckanext.password_policy.helpers as helper
 
 log = logging.getLogger(__name__)
 
@@ -79,7 +79,6 @@ class RegisterView_(RegisterView):
 
 
 class EditView_(EditView):
-
     def _prepare(self, id):
         context = {
             "save": "save" in request.form,
@@ -103,7 +102,6 @@ class EditView_(EditView):
 
 
 class PerformResetView_(PerformResetView):
-
     def _get_form_password(self):
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
