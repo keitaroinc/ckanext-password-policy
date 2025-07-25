@@ -1,4 +1,3 @@
-
 import re
 from builtins import int
 
@@ -17,8 +16,11 @@ def increment_user_login_count(username):
         require_sysadmin = tk.asbool(
             config.get("ckanext.password_policy.require_sysadmin_unlock", False)
         )
-        expiry = None if require_sysadmin else \
-            config.get('ckanext.password_policy.user_locked_time', 600)
+        expiry = (
+            None
+            if require_sysadmin
+            else config.get("ckanext.password_policy.user_locked_time", 600)
+        )
         # user will be cached in redis with count 1
         redis_conn.set(username, 1, ex=expiry)
     else:
@@ -37,8 +39,9 @@ def user_locked_out(username):
     if user_cached is None:
         return False
 
-    return int(user_cached) >= \
-        int(config.get('ckanext.password_policy.failed_logins', 3))
+    return int(user_cached) >= int(
+        config.get("ckanext.password_policy.failed_logins", 3)
+    )
 
 
 def get_user_login_count(username):
@@ -61,23 +64,21 @@ def clear_login_count(username):
 def get_password_length(username=None):
     user = username or g.user
     if is_sysadmin(user):
-        return int(
-            config.get('ckanext.password_policy.password_length_sysadmin', 18)
-        )
-    return int(
-        config.get('ckanext.password_policy.password_length', 10)
-    )
+        return int(config.get("ckanext.password_policy.password_length_sysadmin", 18))
+    return int(config.get("ckanext.password_policy.password_length", 10))
 
 
 def requirements_message(password_length=None, username=None):
     if not password_length:
         password_length = get_password_length(username)
 
-    return tk._('Your password must be {} characters or '
-             'longer and contain uppercase, lowercase, digit, '
-             'and special character ( !#$%&\'()*+,-./[\\]^_`{{|}}~@" ). '
-             'Your password may not contain your username '
-             'or part of your full name.'.format(password_length))
+    return tk._(
+        "Your password must be {} characters or "
+        "longer and contain uppercase, lowercase, digit, "
+        "and special character ( !#$%&'()*+,-./[\\]^_`{{|}}~@\" ). "
+        "Your password may not contain your username "
+        "or part of your full name.".format(password_length)
+    )
 
 
 def custom_password_check(password, username="", fullname=""):
@@ -112,11 +113,12 @@ def custom_password_check(password, username="", fullname=""):
     lowercase_error = re.search(r"[a-z]", password) is None
 
     # searching for symbols
-    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~@"+r'"]', password) is None
+    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~@" + r'"]', password) is None
 
     # searching for username or fullname
-    username_error = username and re.search(username.lower(),
-                                            password.lower()) is not None
+    username_error = (
+        username and re.search(username.lower(), password.lower()) is not None
+    )
 
     fullname_error = False
     if fullname:
@@ -127,24 +129,24 @@ def custom_password_check(password, username="", fullname=""):
 
     # overall result
     password_ok = not (
-            length_error
-            or digit_error
-            or uppercase_error
-            or lowercase_error
-            or symbol_error
-            or username_error
-            or fullname_error
+        length_error
+        or digit_error
+        or uppercase_error
+        or lowercase_error
+        or symbol_error
+        or username_error
+        or fullname_error
     )
 
     return {
-        'password_ok': password_ok,
-        'length_error': length_error,
-        'digit_error': digit_error,
-        'uppercase_error': uppercase_error,
-        'lowercase_error': lowercase_error,
-        'symbol_error': symbol_error,
-        'username_error': username_error,
-        'fullname_error': fullname_error,
+        "password_ok": password_ok,
+        "length_error": length_error,
+        "digit_error": digit_error,
+        "uppercase_error": uppercase_error,
+        "lowercase_error": lowercase_error,
+        "symbol_error": symbol_error,
+        "username_error": username_error,
+        "fullname_error": fullname_error,
     }
 
 
@@ -152,24 +154,31 @@ def lockout_message():
     require_sysadmin = tk.asbool(
         config.get("ckanext.password_policy.require_sysadmin_unlock", False)
     )
-    failed_logins = config.get('ckanext.password_policy.failed_logins')
+    failed_logins = config.get("ckanext.password_policy.failed_logins")
 
     if require_sysadmin:
-        return "You failed {} attempts to login and you have been locked out. " \
-               "Contact a sysadmin to re-enable you to login.".format(
-                    failed_logins)
+        return (
+            "You failed {} attempts to login and you have been locked out. "
+            "Contact a sysadmin to re-enable you to login.".format(failed_logins)
+        )
 
-    lockout = config.get('ckanext.password_policy.user_locked_time')
+    lockout = config.get("ckanext.password_policy.user_locked_time")
     time_to_int = int(lockout)
 
     if time_to_int >= 60:
-        time_in_minutes = time_to_int//60
-        alert = "You failed {} attempts to login and you have been locked out " \
-                "for {} minutes. Try again later or contact a sysadmin.".format(
-                    failed_logins, time_in_minutes)
+        time_in_minutes = time_to_int // 60
+        alert = (
+            "You failed {} attempts to login and you have been locked out "
+            "for {} minutes. Try again later or contact a sysadmin.".format(
+                failed_logins, time_in_minutes
+            )
+        )
         return alert
     else:
-        alert = "You failed {} attempts to login and you have been locked out " \
-                "for {} seconds. Try again later or contact a sysadmin.".format(
-                    failed_logins, time_to_int)
+        alert = (
+            "You failed {} attempts to login and you have been locked out "
+            "for {} seconds. Try again later or contact a sysadmin.".format(
+                failed_logins, time_to_int
+            )
+        )
         return alert

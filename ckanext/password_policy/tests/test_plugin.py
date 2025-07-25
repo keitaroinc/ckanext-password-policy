@@ -48,9 +48,8 @@ To temporary patch the CKAN configuration for the duration of a test you can use
         pass
 """
 
+# import ckanext.password_policy.plugin as plugin
 
-
-import ckanext.password_policy.plugin as plugin
 
 def test_plugin():
     pass
