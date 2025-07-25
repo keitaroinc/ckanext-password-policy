@@ -1,13 +1,13 @@
 
+from six import string_types
+
+import ckan.lib.navl.dictization_functions as df
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
-import ckanext.password_policy.views as views
-import ckan.lib.navl.dictization_functions as df
 import ckanext.password_policy.helpers as h
-from six import string_types
-from ckan.common import config
-from flask_login import LoginManager, UserMixin
+import ckanext.password_policy.views as views
 from ckan.model import User as CKANModelUser
+from flask_login import LoginManager, UserMixin
 
 Missing = df.Missing
 missing = df.missing

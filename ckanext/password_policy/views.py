@@ -1,20 +1,19 @@
 
 import logging
 
-from builtins import int, dict, str
-from flask import Blueprint, request, redirect, render_template, url_for, flash
-from flask_login import current_user, login_user, logout_user, login_required
-from ckan.views.user import RegisterView, EditView, PerformResetView
-import ckan.logic as logic
-import ckan.plugins as plugins
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from six import text_type
+
 import ckan.lib.authenticator as authenticator
 import ckan.lib.base as base
+import ckan.lib.helpers as h
+import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as tk
-from ckan.common import config
-import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
-from six import text_type
+from ckan.common import config, login_user, logout_user
+from ckan.views.user import EditView, PerformResetView, RegisterView
+from flask_login import current_user, login_required, login_user, logout_user
 
 log = logging.getLogger(__name__)
 

@@ -1,11 +1,13 @@
 
-from builtins import int
 import re
+from builtins import int
+
+from flask import g
+
 import ckan.plugins.toolkit as tk
 from ckan.authz import is_sysadmin
 from ckan.common import config
 from ckan.lib.redis import connect_to_redis
-from flask import g
 
 
 def increment_user_login_count(username):
