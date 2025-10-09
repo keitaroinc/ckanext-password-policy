@@ -1,18 +1,24 @@
-from ckan.views.user import RegisterView, EditView, PerformResetView
+from ckan.views.user import RegisterView, EditView, PerformResetView, rotate_token, next_page_or_default
 # from ckan.lib.repoze_plugins.friendly_form import FriendlyFormPlugin
 import ckan.logic as logic
 import ckan.plugins as plugins
 import ckan.lib.base as base
+import ckan.lib.authenticator as authenticator
 from flask import Blueprint
 import ckan.model as model
 import ckan.plugins.toolkit as tk
-from ckan.common import _, config, g, request
 import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
 # from webob import Request
 # from webob.exc import HTTPFound, HTTPUnauthorized
+from typing import Any, Optional, Union
 from six import text_type
 from six.moves.urllib.parse import urlencode
+from ckan.common import (
+    _, config, g, current_user, login_user, logout_user, 
+    session, config, g, request, repr_untrusted
+)
+from ckan.types import Context, Schema, Response
 # try:
 #     from webob.multidict import MultiDict
 # except ImportError:
@@ -218,23 +224,52 @@ def _get_repoze_handler(handler_name):
                    handler_name)
 
 
-def custom_login():
-    # Do any plugin login stuff
+def custom_login() -> Union[Response, str]:
     for item in plugins.PluginImplementations(plugins.IAuthenticator):
         response = item.login()
         if response:
             return response
 
-    extra_vars = {}
-    if g.user:
-        return base.render(u'user/logout_first.html', extra_vars)
+    print("================================")
+    print("custom login")
+    print("================================")
+    extra_vars: dict[str, Any] = {}
 
-    came_from = request.params.get(u'came_from')
-    if not came_from:
-        came_from = h.url_for(u'user.logged_in')
-    g.login_handler = h.url_for(
-        _get_repoze_handler(u'login_handler_path'), came_from=came_from)
-    return base.render(u'user/login.html', extra_vars)
+    if current_user.is_authenticated:
+        return base.render("user/logout_first.html", extra_vars)
+
+    if request.method == "POST":
+        username_or_email = request.form.get("login")
+        password = request.form.get("password")
+        _remember = request.form.get("remember")
+
+        identity = {
+            u"login": username_or_email,
+            u"password": password
+        }
+
+        user_obj = authenticator.ckan_authenticator(identity)
+        if user_obj:
+            next = request.args.get('next', request.args.get('came_from'))
+            if _remember:
+                from datetime import timedelta
+                duration_time = timedelta(milliseconds=int(_remember))
+                login_user(user_obj, remember=True, duration=duration_time)
+                rotate_token()
+                return next_page_or_default(next)
+            else:
+                login_user(user_obj)
+                rotate_token()
+                return next_page_or_default(next)
+        else:
+            if config.get('ckan.recaptcha.privatekey'):
+                err = _(u"Login failed. Bad username or password or CAPTCHA.")
+            else:
+                err = _(u"Login failed. Bad username or password.")
+            h.flash_error(err)
+            return base.render("user/login.html", extra_vars)
+
+    return base.render("user/login.html", extra_vars)
 
 
 def logged_in():
