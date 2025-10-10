@@ -248,27 +248,32 @@ def custom_login() -> Union[Response, str]:
             u"password": password
         }
 
-        user_obj = authenticator.ckan_authenticator(identity)
-        if user_obj:
-            next = request.args.get('next', request.args.get('came_from'))
-            if _remember:
-                from datetime import timedelta
-                duration_time = timedelta(milliseconds=int(_remember))
-                login_user(user_obj, remember=True, duration=duration_time)
-                rotate_token()
-                return next_page_or_default(next)
-            else:
-                login_user(user_obj)
-                rotate_token()
-                return next_page_or_default(next)
-        else:
-            if config.get('ckan.recaptcha.privatekey'):
-                err = _(u"Login failed. Bad username or password or CAPTCHA.")
-            else:
-                err = _(u"Login failed. Bad username or password.")
-            h.flash_error(err)
-            return base.render("user/login.html", extra_vars)
+        allowed_failes_logins = int(config.get('ckanext.password_policy.failed_logins', 3))
+        if helper.user_login_count(username_or_email) < allowed_failes_logins:
 
+            user_obj = authenticator.ckan_authenticator(identity)
+            if user_obj:
+                next = request.args.get('next', request.args.get('came_from'))
+                if _remember:
+                    from datetime import timedelta
+                    duration_time = timedelta(milliseconds=int(_remember))
+                    login_user(user_obj, remember=True, duration=duration_time)
+                    rotate_token()
+                    return next_page_or_default(next)
+                else:
+                    login_user(user_obj)
+                    rotate_token()
+                    return next_page_or_default(next)
+            else:
+                if config.get('ckan.recaptcha.privatekey'):
+                    err = _(u"Login failed. Bad username or password or CAPTCHA.")
+                else:
+                    err = _(u"Login failed. Bad username or password.")
+                h.flash_error(err)
+                return base.render("user/login.html", extra_vars)
+        else:
+           return base.render("user/locked.html", extra_vars) 
+    
     return base.render("user/login.html", extra_vars)
 
 

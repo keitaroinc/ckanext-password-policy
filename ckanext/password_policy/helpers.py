@@ -67,7 +67,7 @@ def custom_password_check(password):
     }
 
 def lockout_time():
-    lockout = config.get('ckanext.password_policy.user_locked_time')
+    lockout = config.get('ckanext.password_policy.user_locked_time', 600)
 
     time_to_int = int(lockout)
 
