@@ -41,7 +41,7 @@ def custom_user_schema(unicode_safe, user_both_passwords_entered,
     schema['password1'] = [unicode_safe, user_both_passwords_entered,
                            user_custom_password_validator,
                            user_passwords_match]
-    schema['password2'] = [text_type]
+    schema['password2'] = []
 
     return schema
 
