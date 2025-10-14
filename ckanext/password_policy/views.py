@@ -18,7 +18,7 @@ from ckan.common import (
     _, config, g, current_user, login_user, logout_user, 
     session, config, g, request, repr_untrusted
 )
-from ckan.types import Context, Schema, Response
+from ckan.types import Context, Schema, Response, Validator
 # try:
 #     from webob.multidict import MultiDict
 # except ImportError:
@@ -48,13 +48,15 @@ def custom_user_schema(unicode_safe, user_both_passwords_entered,
 
 @logic.schema.validator_args
 def custom_user_edit_form_schema(
-        ignore_missing, unicode_safe, user_custom_password_validator,
-        user_passwords_match):
+        ignore_missing: Validator, unicode_safe: Validator,
+        not_empty: Validator, user_id_or_name_exists: Validator,
+        user_custom_password_validator: Validator, user_passwords_match: Validator):
     schema = logic.schema.default_user_schema()
 
+    schema["id"] = [not_empty, user_id_or_name_exists, unicode_safe]
+    schema['password'] = [ignore_missing]
     schema['password1'] = [ignore_missing, unicode_safe,
-                           user_custom_password_validator,
-                           user_passwords_match]
+                           user_custom_password_validator, user_passwords_match]
     schema['password2'] = [ignore_missing, unicode_safe]
 
     return schema
@@ -79,20 +81,19 @@ class RegisterView_(RegisterView):
 
 class EditView_(EditView):
     
-    def _prepare(self, id):
-        context = {
+    def _prepare(self, id: Optional[str]) -> tuple[Context, str]:
+        context: Context = {
             u'save': u'save' in request.form,
             u'schema': custom_user_edit_form_schema(),
-            u'model': model,
-            u'session': model.Session,
-            u'user': g.user,
-            u'auth_user_obj': g.userobj
+            u'user': current_user.name,
+            u'auth_user_obj': current_user
         }
         if id is None:
-            if g.userobj:
-                id = g.userobj.id
+            if current_user.is_authenticated:
+                id = current_user.id
             else:
                 base.abort(400, _(u'No user specified'))
+        assert id
         data_dict = {u'id': id}
 
         try:
