@@ -1,4 +1,4 @@
-[![Python][]][1] [![CKAN][]][2]
+[![CI][]][1] [![Python][]][2] [![CKAN][]][3]
 
 # CKAN password policy 
 
@@ -123,8 +123,9 @@ If ckanext-password-policy should be available on PyPI you can follow these step
 
 [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-
+  [CI]: https://github.com/keitaroinc/ckanext-password-policy/workflows/CI/badge.svg
+  [1]: https://github.com/keitaroinc/ckanext-password-policy/actions
   [Python]: https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11-blue
-  [1]: https://www.python.org
+  [2]: https://www.python.org
   [CKAN]: https://img.shields.io/badge/ckan-%202.9%20|%202.10%20|%202.11-yellow
-  [2]: https://www.ckan.org
+  [3]: https://www.ckan.org
