@@ -1,3 +1,5 @@
+[![Python][]][1] [![CKAN][]][2]
+
 # CKAN password policy 
 
 CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
@@ -9,11 +11,11 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.6 and earlier | not tested    |
-| 2.7             | not tested    |
-| 2.8             | not tested    |
-| 2.9             | Yes    |
+| 2.9             | Yes           |
+| 2.10            | Yes           |
+| 2.11            | Yes           |
 
+For CKAN 2.9 use the v0.0.1 tag
 
 
 ## Installation
@@ -120,3 +122,9 @@ If ckanext-password-policy should be available on PyPI you can follow these step
 ## License
 
 [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
+
+
+  [Python]: https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11-blue
+  [1]: https://www.python.org
+  [CKAN]: https://img.shields.io/badge/ckan-%202.9%20|%202.10%20|%202.11-yellow
+  [2]: https://www.ckan.org
