@@ -165,7 +165,16 @@ def custom_login() -> Union[Response, str]:
                 rotate_token()
                 return next_page_or_default(next)
         else:
-            if helper.user_login_count(username_or_email) < allowed_failes_logins:
+            user_redis = model.User.by_name(username_or_email)
+            if not user_redis:
+                user_redis = model.User.by_email(username_or_email)
+            
+            if user_redis:
+                login_counter = helper.user_login_count(user_redis.name)
+            else:
+                login_counter = 0
+            
+            if login_counter < allowed_failes_logins:
                 if config.get('ckan.recaptcha.privatekey'):
                     err = _(u"Login failed. Bad username or password or CAPTCHA.")
                 else:
