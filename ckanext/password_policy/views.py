@@ -13,11 +13,9 @@ import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
 from typing import Any, Optional, Union
 from ckan.common import (
-    _, config, g, current_user, login_user, logout_user, 
-    session, config, g, request, repr_untrusted
+    _, config, g, current_user, login_user, request
 )
-from ckan.types import Context, Schema, Response, Validator
-
+from ckan.types import Context, Response, Validator
 
 
 custom_user = Blueprint(u'custom_user', __name__, url_prefix=u'/user')
@@ -32,7 +30,7 @@ def me():
 def custom_user_schema(unicode_safe, user_both_passwords_entered,
                        user_passwords_match, user_custom_password_validator):
     schema = logic.schema.user_new_form_schema()
-     
+
     schema['password1'] = [unicode_safe, user_both_passwords_entered,
                            user_custom_password_validator,
                            user_passwords_match]
@@ -45,17 +43,19 @@ def custom_user_schema(unicode_safe, user_both_passwords_entered,
 def custom_user_edit_form_schema(
         ignore_missing: Validator, unicode_safe: Validator,
         not_empty: Validator, user_id_or_name_exists: Validator,
-        user_custom_password_validator: Validator, user_passwords_match: Validator):
+        user_custom_password_validator: Validator,
+        user_passwords_match: Validator):
     schema = logic.schema.default_user_schema()
 
     schema["id"] = [not_empty, user_id_or_name_exists, unicode_safe]
     schema['password'] = [ignore_missing]
     schema['password1'] = [ignore_missing, unicode_safe,
-                           user_custom_password_validator, user_passwords_match]
+                           user_custom_password_validator,
+                           user_passwords_match]
     schema['password2'] = [ignore_missing, unicode_safe]
 
     return schema
-   
+
 
 class RegisterView_(RegisterView):  
     def _prepare(self):
@@ -75,7 +75,7 @@ class RegisterView_(RegisterView):
 
 
 class EditView_(EditView):
-    
+
     def _prepare(self, id: Optional[str]) -> tuple[Context, str]:
         context: Context = {
             u'save': u'save' in request.form,
@@ -99,13 +99,13 @@ class EditView_(EditView):
 
 
 class PerformResetView_(PerformResetView):
-        
+
     def _get_form_password(self):
         password1 = request.form.get(u'password1')
         password2 = request.form.get(u'password2')
 
         password_length = config.get('ckanext.password_policy.password_length', 12)
-       
+
         valid_pass = helper.custom_password_check(password1)
         if valid_pass['password_ok']==False:
             raise ValueError(
@@ -119,7 +119,7 @@ class PerformResetView_(PerformResetView):
         return password1
         msg = _(u'You must provide a password')
         raise ValueError(msg)
-        
+
 
 def _get_repoze_handler(handler_name):
     u'''Returns the URL that repoze.who will respond to and perform a
@@ -133,7 +133,7 @@ def custom_login() -> Union[Response, str]:
         response = item.login()
         if response:
             return response
-        
+
     extra_vars: dict[str, Any] = {}
 
     if current_user.is_authenticated:
@@ -151,7 +151,7 @@ def custom_login() -> Union[Response, str]:
 
         allowed_failes_logins = int(config.get('ckanext.password_policy.failed_logins', 3))
         user_obj = authenticator.ckan_authenticator(identity)
-        
+
         if user_obj and (helper.user_login_count(user_obj.name) < allowed_failes_logins):
             next = request.args.get('next', request.args.get('came_from'))
             if _remember:
@@ -168,12 +168,12 @@ def custom_login() -> Union[Response, str]:
             user_redis = model.User.by_name(username_or_email)
             if not user_redis:
                 user_redis = model.User.by_email(username_or_email)
-            
+
             if user_redis:
                 login_counter = helper.user_login_count(user_redis.name)
             else:
                 login_counter = 0
-            
+
             if login_counter < allowed_failes_logins:
                 if config.get('ckan.recaptcha.privatekey'):
                     err = _(u"Login failed. Bad username or password or CAPTCHA.")
@@ -183,7 +183,7 @@ def custom_login() -> Union[Response, str]:
                 return base.render("user/login.html", extra_vars)
             else:
                 return base.render("user/locked.html", extra_vars)
-            
+
     return base.render("user/login.html", extra_vars)
 
 
@@ -195,7 +195,7 @@ def logged_in():
     if g.user:
         return me()
     else:
-        
+
         err = _(u'Login failed. Bad username or password')
         h.flash_error(err)
         return custom_login()
@@ -204,7 +204,6 @@ def logged_in():
 def locked_user():
 
     alert = helper.lockout_time()
-    
 
     extra_vars = {}
     extra_vars['alert'] = alert

@@ -28,7 +28,7 @@ def user_custom_password_validator(key, data, errors, context):
                                        'longer and contain uppercase, lowercase, '
                                        'digit and special character'))
 
-     
+
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer) 
     plugins.implements(plugins.IValidators)
@@ -36,23 +36,19 @@ class PasswordPolicyPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IAuthenticator, inherit=True)
     plugins.implements(plugins.ITemplateHelpers)
 
-    
-
     # IConfigurer
 
     def update_config(self, config_):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic',
-            'password_policy')
-        
+        toolkit.add_resource('fanstatic', 'password_policy')
+
     def get_validators(self):
-        return {'user_custom_password_validator': user_custom_password_validator}
-    
+        return {'user_custom_password_validator':
+                user_custom_password_validator}
+
     def get_blueprint(self):
         return views.get_blueprints()
 
-
     def get_helpers(self):
         return {'lockout_time': h.lockout_time}
-
