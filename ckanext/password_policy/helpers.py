@@ -6,7 +6,7 @@ from ckan.common import config
 def user_login_count(username):
     redis_conn = connect_to_redis()
     user_cached = redis_conn.get(username)
-    if user_cached == None:
+    if user_cached is None:
         expiry = config.get('ckanext.password_policy.user_locked_time', 600)
         # user will be cached in redis with count 1
         redis_conn.set(username, 1, ex=expiry)
@@ -55,7 +55,8 @@ def custom_password_check(password):
     symbol_error = re.search(r"[ !#$%&@'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
 
     # overall result
-    password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+    password_ok = not (length_error or digit_error or uppercase_error or
+                       lowercase_error or symbol_error)
 
     return {
         'password_ok': password_ok,
@@ -66,6 +67,7 @@ def custom_password_check(password):
         'symbol_error': symbol_error,
     }
 
+
 def lockout_time():
     lockout = config.get('ckanext.password_policy.user_locked_time', 600)
 
@@ -73,8 +75,14 @@ def lockout_time():
 
     if time_to_int >= 60:
         time_in_minutes = time_to_int//60
-        alert = f" You failed 3 atempts to login and you have been locked out for {time_in_minutes} minutes. Try again later."
+        alert = (
+            f"You failed 3 attempts to login and you have been locked out for "
+            f"{time_in_minutes} minutes. Try again later."
+        )
         return alert
     else:
-        alert = f"You failed 3 atempts to login and you have been locked out for {time_to_int} seconds. Try again later."
+        alert = (
+            f"You failed 3 attempts to login and you have been locked out for "
+            f"{time_to_int} seconds. Try again later."
+        )
         return alert

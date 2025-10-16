@@ -1,5 +1,5 @@
 from ckan.views.user import (
-    RegisterView, EditView, PerformResetView, 
+    RegisterView, EditView, PerformResetView,
     rotate_token, next_page_or_default
     )
 import ckan.logic as logic
@@ -57,7 +57,7 @@ def custom_user_edit_form_schema(
     return schema
 
 
-class RegisterView_(RegisterView):  
+class RegisterView_(RegisterView):
     def _prepare(self):
         context = {
             u'model': model,
@@ -107,7 +107,7 @@ class PerformResetView_(PerformResetView):
         password_length = config.get('ckanext.password_policy.password_length', 12)
 
         valid_pass = helper.custom_password_check(password1)
-        if valid_pass['password_ok']==False:
+        if valid_pass['password_ok'] is False:
             raise ValueError(
                 _(f"u'Your password must be {password_length} characters or '"
                   u'longer and contain uppercase, lowercase, '
@@ -237,7 +237,7 @@ custom_user.add_url_rule(
 custom_user.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/logged_in', view_func=logged_in, methods=("GET", "POST"))
 
-custom_user.add_url_rule(u'/locked', view_func=locked_user, methods=("GET", "POST")) 
+custom_user.add_url_rule(u'/locked', view_func=locked_user, methods=("GET", "POST"))
 custom_user.add_url_rule(u'/_logout', view_func=logout)
 
 

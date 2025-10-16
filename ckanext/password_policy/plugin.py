@@ -30,7 +30,7 @@ def user_custom_password_validator(key, data, errors, context):
 
 
 class PasswordPolicyPlugin(plugins.SingletonPlugin):
-    plugins.implements(plugins.IConfigurer) 
+    plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IValidators)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IAuthenticator, inherit=True)
