@@ -1,7 +1,8 @@
+[![CI][]][1] [![Python][]][2] [![CKAN][]][3]
+
 # CKAN password policy 
 
-CKAN extension that adds password policy for all the users. With this extension You can set up minimum password length and password complexity (password must consist capital and small letters, number and special characters). A user lock on defined time period after x number of failed logins is also implemented
-
+A CKAN extension that enforces configurable password policies—requiring minimum length and complexity with uppercase, lowercase, numeric, and special characters—and implements automatic user lockout after a defined number of failed login attempts to enhance platform security.
 
 ## Requirements
 
@@ -9,11 +10,11 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.6 and earlier | not tested    |
-| 2.7             | not tested    |
-| 2.8             | not tested    |
-| 2.9             | Yes    |
+| 2.9             | Yes           |
+| 2.10            | Yes           |
+| 2.11            | Yes           |
 
+For CKAN 2.9 use the v0.0.1 tag
 
 
 ## Installation
@@ -44,15 +45,8 @@ To install ckanext-password-policy:
 
 ## Config settings
 
-1. The following setting needs to be done in who.ini
-	
-   	```
-	[plugin:friendlyform]
-	use = ckanext.password_policy.views:FriendlyFormPlugin_
-  	```
 
-
-2. These are the settings for production.ini
+1. These are the settings for production.ini
 
    	```
 	Minimum length of the user password. Default is 12
@@ -120,3 +114,10 @@ If ckanext-password-policy should be available on PyPI you can follow these step
 ## License
 
 [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
+
+  [CI]: https://github.com/keitaroinc/ckanext-password-policy/workflows/CI/badge.svg
+  [1]: https://github.com/keitaroinc/ckanext-password-policy/actions
+  [Python]: https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11-blue
+  [2]: https://www.python.org
+  [CKAN]: https://img.shields.io/badge/ckan-%202.9%20|%202.10%20|%202.11-yellow
+  [3]: https://www.ckan.org
