@@ -218,10 +218,7 @@ def logout():
         if response:
             return response
 
-    url = h.url_for(u'user.logged_out_page')
-    return h.redirect_to(
-        _get_repoze_handler(u'logout_handler_path') + u'?came_from=' + url,
-        parse_url=True)
+    return h.redirect_to(u'user.logged_out_page')
 
 
 custom_user.add_url_rule(
