@@ -13,7 +13,7 @@ import ckan.lib.helpers as h
 import ckanext.password_policy.helpers as helper
 from typing import Any, Optional, Union
 from ckan.common import (
-    _, config, g, current_user, login_user, request
+    _, config, g, current_user, login_user, request, logout_user
 )
 from ckan.types import Context, Response, Validator
 
@@ -217,7 +217,9 @@ def logout():
         response = item.logout()
         if response:
             return response
-
+    if g.user:
+        helper.clear_login_count(g.user)
+    logout_user()
     return h.redirect_to(u'user.logged_out_page')
 
 
